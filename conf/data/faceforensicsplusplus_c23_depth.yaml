@@ -9,6 +9,9 @@ attacks: ["Deepfakes", "Face2Face", "FaceSwap", "NeuralTextures"]
 use_attacks: true
 use_depth: true
 
+depth_type: "depth" # 'depth' or 'hha' or 'None'
+input_type: "rgbd" # 'rgb' or 'rgbd' or 'd' 
+
 batch_size: 192
 num_workers: 8
 

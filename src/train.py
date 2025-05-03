@@ -3,6 +3,7 @@ from omegaconf import OmegaConf
 import hydra
 import logging
 from datetime import datetime
+import sys
 
 import pytorch_lightning as pl
 from pytorch_lightning import Trainer
@@ -46,8 +47,15 @@ def train(conf: omegaconf.DictConfig) -> None:
     # # data module declaration
     data = FaceForensicsPlusPlus(conf)
     data.setup(stage="fit")
-    log.info(f"Train data: {len(data.train_data)}")
-    log.info(f"Val data: {len(data.val_data)}")
+
+    train_data_len = len(data.train_data)
+    val_data_len = len(data.val_data)
+
+    log.info(f"Train data: {train_data_len}")
+    log.info(f"Val data: {val_data_len}")
+
+    if not (train_data_len and val_data_len):
+        sys.exit(1)
 
     # main module declaration
     if conf.model.model_name in (

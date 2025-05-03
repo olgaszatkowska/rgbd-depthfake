@@ -133,7 +133,7 @@ class FaceForensics(Dataset):
         # Loop over compression levels
         for compression in self.compression_level:
             # Loop over real videos
-            logger.info("Loading real videos")
+            logger.info(f"Loading real videos for classes {self.real}")
             for real in self.real:
                 if use_depth:
                     # Add depths
@@ -175,7 +175,7 @@ class FaceForensics(Dataset):
 
             if use_attacks:
                 # Loop over the attacks
-                logger.info("Loading fake videos")
+                logger.info(f"Loading fake videos for attacks {self.attacks}")
                 for attack in self.attacks:
                     if use_depth:
                         # Add depths
@@ -254,7 +254,7 @@ class FaceForensics(Dataset):
                 "*/*.jpg"
             )
         ]
-
+        logger.info(f"Found {len(images)}")
         return images
 
     def _load_labels(self, images, class_id):
@@ -285,9 +285,17 @@ class FaceForensics(Dataset):
             ) if not self._is_file_empty(path)
         ]
 
+        logger.info(f"Found {len(depths)}")
+
         return depths
 
     def _load_rgb_from_depth(self, compression, depths, label, class_id):
+        """
+        Converts a list of depth file paths to their corresponding RGB image paths,
+        then filters to keep only those RGB paths that actually exist.
+        """
+        logger.info(f"Loading rgb from depths class id={class_id} compression={compression} depths={depths}")
+
         depth_images = []
         for depth in depths:
             rgb_path = str(depth).replace(
@@ -296,10 +304,14 @@ class FaceForensics(Dataset):
             rgb_path = rgb_path.replace("_d.npy", ".jpg")
             depth_images.append(Path(rgb_path))
 
+        logger.debug(f"Generated {len(depth_images)}")
+
         # Remove paths if they do not exist
         rgb_images = self._load_rgb(compression, label=label, class_id=class_id)
         images_to_remove = set(depth_images) - set(rgb_images)
         images = list(set(depth_images) - images_to_remove)
+
+        logger.debug(f"Loaded {len(images)}")
 
         return images
 

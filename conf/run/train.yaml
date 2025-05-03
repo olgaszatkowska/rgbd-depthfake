@@ -1,12 +1,12 @@
 # reproducibility
 seed: 42
 
-cuda_device: '0'
+cuda_device: 'cpu'
 
 # pl_trainer
 pl_trainer:
   _target_: pytorch_lightning.Trainer
-  accelerator: 'gpu'
+  accelerator: 'cpu'
   # devices: [6]
   max_epochs: 30
   # auto_scale_batch_size: 'power'

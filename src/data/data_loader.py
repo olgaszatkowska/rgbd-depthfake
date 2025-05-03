@@ -87,10 +87,16 @@ class FaceForensicsPlusPlus(pl.LightningDataModule):
             self.val_data = FaceForensics(
                 conf=self.conf, split="val", transform=self.transform
             )
+
+            if not (self.val_data and self.train_data):
+                logging.error("Failed to find validation and train data")
         else:
             self.test_data = FaceForensics(
                 conf=self.conf, split="test", transform=self.transform
             )
+
+            if not self.test_data:
+                logging.error("Failed to find test")
 
     def train_dataloader(self, *args, **kwargs) -> DataLoader:
         return DataLoader(
